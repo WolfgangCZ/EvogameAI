@@ -76,16 +76,22 @@ void handle_boundary_collision(Circle* circle, float left, float right, float to
 // Initialize circles array
 void initialize_circles(Circle* circles, int* circle_count, float boundary_left, float boundary_right, 
                       float boundary_top, float boundary_bottom) {
-    *circle_count = INITIAL_CIRCLES;
-    for (int i = 0; i < *circle_count; i++) {
-        circles[i].position = (Vector2){
-            random_float(boundary_left + MAX_RADIUS, boundary_right - MAX_RADIUS),
-            random_float(boundary_top + MAX_RADIUS, boundary_bottom - MAX_RADIUS)
-        };
+    *circle_count = 0;
+    for (int i = 0; i < INITIAL_CIRCLES; i++) {
+        circles[i].position.x = random_float(boundary_left, boundary_right);
+        circles[i].position.y = random_float(boundary_top, boundary_bottom);
         circles[i].speed = random_speed();
         circles[i].color = random_color();
         circles[i].radius = random_float(MIN_RADIUS, MAX_RADIUS);
-        circles[i].facing_angle = random_float(0, 360); // Initialize random facing angle
+        circles[i].facing_direction = random_float(0, 360);  // Random initial facing direction
+        circles[i].trail_index = 0;
+        
+        // Initialize trail with current position
+        for (int j = 0; j < TRAIL_LENGTH; j++) {
+            circles[i].trail[j] = circles[i].position;
+        }
+        
+        (*circle_count)++;
     }
 }
 
@@ -93,6 +99,10 @@ void initialize_circles(Circle* circles, int* circle_count, float boundary_left,
 void update_circles(Circle* circles, int circle_count, float boundary_left, float boundary_right, 
                   float boundary_top, float boundary_bottom) {
     for (int i = 0; i < circle_count; i++) {
+        // Store current position in trail
+        circles[i].trail[circles[i].trail_index] = circles[i].position;
+        circles[i].trail_index = (circles[i].trail_index + 1) % TRAIL_LENGTH;
+
         // Update position
         circles[i].position.x += circles[i].speed.x;
         circles[i].position.y += circles[i].speed.y;
@@ -138,24 +148,45 @@ void update_circles(Circle* circles, int circle_count, float boundary_left, floa
 // Draw circles and their direction indicators
 void draw_circles(const Circle* circles, int circle_count, bool show_debug) {
     for (int i = 0; i < circle_count; i++) {
-        // Draw the circle
+        // Draw trail (previous positions)
+        for (int j = 1; j < TRAIL_LENGTH; j++) {  // Start from 1 to skip current position
+            // Calculate trail index (most recent first)
+            int trail_index = (circles[i].trail_index - j + TRAIL_LENGTH) % TRAIL_LENGTH;
+            
+            // Calculate opacity (most recent = highest opacity)
+            float alpha = 0.8f * (1.0f - (float)j / TRAIL_LENGTH);
+            if (j == TRAIL_LENGTH - 1) alpha = 0.0f;  // Force last shadow to be completely transparent
+            
+            Color trail_color = circles[i].color;
+            trail_color.a = (unsigned char)(alpha * 255);  // Apply transparency
+            
+            // Draw trail circle
+            DrawCircleV(circles[i].trail[trail_index], circles[i].radius, trail_color);
+        }
+        
+        // Draw the current circle
         DrawCircleV(circles[i].position, circles[i].radius, circles[i].color);
         
-        // Draw facing direction line
+        // Draw facing direction indicator only in debug mode
         if (show_debug) {
-            // Convert facing angle to radians
-            float angle_rad = circles[i].facing_angle * DEG2RAD;
-            Vector2 direction = (Vector2){
-                cosf(angle_rad),
-                sinf(angle_rad)
+            float facing_line_length = circles[i].radius * 1.2f;
+            Vector2 facing_end_pos = {
+                circles[i].position.x + cosf(circles[i].facing_direction * DEG2RAD) * facing_line_length,
+                circles[i].position.y + sinf(circles[i].facing_direction * DEG2RAD) * facing_line_length
             };
-            Vector2 line_end = (Vector2){
-                circles[i].position.x + direction.x * DIRECTION_LINE_LENGTH,
-                circles[i].position.y + direction.y * DIRECTION_LINE_LENGTH
-            };
-            
-            // Draw facing direction line
-            DrawLineV(circles[i].position, line_end, BLACK);
+            DrawLineEx(circles[i].position, facing_end_pos, 2, BLUE);
         }
     }
+}
+
+void rotate_circle_direction(Circle* circle, float rotation_degrees) {
+    // Update facing direction
+    circle->facing_direction += rotation_degrees;
+    
+    // Keep angle between 0 and 360 degrees
+    while (circle->facing_direction >= 360.0f) circle->facing_direction -= 360.0f;
+    while (circle->facing_direction < 0.0f) circle->facing_direction += 360.0f;
+    
+    // Note: We no longer update the speed vector here
+    // The movement direction remains independent of the facing direction
 } 

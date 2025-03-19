@@ -90,27 +90,11 @@ int main(void)
             }
 
             // Direction control with A/D
-            if (current_speed > 0) {  // Only rotate if circle is moving
-                float angle = rotation_speed * delta_time;  // Angle to rotate this frame
-                
-                if (IsKeyDown(KEY_A)) {
-                    // Rotate counterclockwise
-                    float cos_a = cosf(angle * DEG2RAD);
-                    float sin_a = sinf(angle * DEG2RAD);
-                    float new_x = selected->speed.x * cos_a - selected->speed.y * sin_a;
-                    float new_y = selected->speed.x * sin_a + selected->speed.y * cos_a;
-                    selected->speed.x = new_x;
-                    selected->speed.y = new_y;
-                }
-                else if (IsKeyDown(KEY_D)) {
-                    // Rotate clockwise
-                    float cos_a = cosf(-angle * DEG2RAD);
-                    float sin_a = sinf(-angle * DEG2RAD);
-                    float new_x = selected->speed.x * cos_a - selected->speed.y * sin_a;
-                    float new_y = selected->speed.x * sin_a + selected->speed.y * cos_a;
-                    selected->speed.x = new_x;
-                    selected->speed.y = new_y;
-                }
+            if (IsKeyDown(KEY_A)) {
+                rotate_circle_direction(selected, -rotation_speed * delta_time);
+            }
+            else if (IsKeyDown(KEY_D)) {
+                rotate_circle_direction(selected, rotation_speed * delta_time);
             }
         }
 
@@ -128,7 +112,7 @@ int main(void)
                     circles[circle_count].speed = random_speed();
                     circles[circle_count].color = random_color();
                     circles[circle_count].radius = random_float(MIN_RADIUS, MAX_RADIUS);
-                    circles[circle_count].facing_angle = random_float(0, 360);
+                    circles[circle_count].facing_direction = random_float(0, 360);
                     circle_count++;
                 }
                 spawn_timer = 0.0f;
