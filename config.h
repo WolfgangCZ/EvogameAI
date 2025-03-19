@@ -3,21 +3,26 @@
 
 #include "raylib.h"
 
-// Window settings
+// Window configuration
 #define WINDOW_WIDTH 1600
 #define WINDOW_HEIGHT 900
 #define TARGET_FPS 60
 
+// Game area boundaries (relative to window size)
+#define BOUNDARY_MARGIN 50
+
+// Circle configuration
+#define CIRCLE_COUNT 5
+#define CIRCLE_RADIUS 15.0f  // Fixed size for all circles
+
+// Colors
+#define BACKGROUND_COLOR DARKGRAY
+
 // Game settings
 #define INITIAL_CIRCLES 10
-#define MIN_RADIUS 4
-#define MAX_RADIUS 8
 #define MIN_SPEED 20
 #define MAX_SPEED 40
 #define TRAIL_LENGTH 5
-
-// Colors
-#define BACKGROUND_COLOR (Color){ 25, 25, 25, 255 }  // Dark gray background
 
 // Circle parameters
 #define MAX_CIRCLES 10000
@@ -25,7 +30,6 @@
 #define DIRECTION_LINE_LENGTH 15.0f  // Base length for direction indicator
 
 // Boundary rectangle parameters
-#define BOUNDARY_MARGIN 100  // Distance from screen edges
 #define BOUNDARY_THICKNESS 2  // Thickness of boundary lines
 
 // Zoom parameters

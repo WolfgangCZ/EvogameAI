@@ -3,6 +3,7 @@
 #include "circle.h"
 #include "camera.h"
 #include "debug.h"
+#include "rectangle.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -23,17 +24,23 @@ int main(void)
     // Initialize random seed
     srand(time(NULL));
 
-    // Initialize circles array
-    Circle* circles = (Circle*)malloc(MAX_CIRCLES * sizeof(Circle));
-    int circle_count = 0;
+    // Initialize circles
+    Circle circles[CIRCLE_COUNT];
+    int circle_count = CIRCLE_COUNT;
     float spawn_timer = 0.0f;
     bool show_debug = false;  // Debug mode flag
     int selected_circle_index = 0;  // Start with first circle selected
     float speed_adjustment = 50.0f;  // Speed change per second (scaled by delta_time)
     float rotation_speed = 180.0f;  // Degrees per second
     
+    // Initialize circles
     // Initialize initial circles
     initialize_circles(circles, &circle_count, boundary_left, boundary_right, boundary_top, boundary_bottom);
+
+    // Initialize rectangles
+    GameRectangle rectangles[MAX_RECTANGLES];
+    int rectangle_count;
+    init_rectangles(rectangles, &rectangle_count, boundary_left, boundary_right, boundary_top, boundary_bottom);
 
     SetTargetFPS(60);
 
@@ -53,9 +60,13 @@ int main(void)
         // Handle circle selection with left mouse button
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             Vector2 mouse_pos = GetScreenToWorld2D(GetMousePosition(), camera);
-            selected_circle_index = -1;  // Reset selection
             
-            // Check each circle for hit
+            // First check for rectangle clicks
+            handle_rectangle_clicks(rectangles, rectangle_count, mouse_pos, 
+                                  boundary_left, boundary_right, boundary_top, boundary_bottom);
+            
+            // Then check for circle selection
+            selected_circle_index = -1;  // Reset selection
             for (int i = 0; i < circle_count; i++) {
                 float dx = mouse_pos.x - circles[i].position.x;
                 float dy = mouse_pos.y - circles[i].position.y;
@@ -109,9 +120,9 @@ int main(void)
                 if (mouse_pos.x >= boundary_left && mouse_pos.x <= boundary_right &&
                     mouse_pos.y >= boundary_top && mouse_pos.y <= boundary_bottom) {
                     circles[circle_count].position = mouse_pos;
-                    circles[circle_count].speed = random_speed();
+                    circles[circle_count].speed = (Vector2){0.0f, 0.0f};  // Zero initial speed
                     circles[circle_count].color = random_color();
-                    circles[circle_count].radius = random_float(MIN_RADIUS, MAX_RADIUS);
+                    circles[circle_count].radius = CIRCLE_RADIUS;  // Use fixed circle radius
                     circles[circle_count].facing_direction = random_float(0, 360);
                     circle_count++;
                 }
@@ -124,12 +135,19 @@ int main(void)
         // Update circles
         update_circles(circles, circle_count, boundary_left, boundary_right, boundary_top, boundary_bottom);
 
+        // Check for circle-rectangle collisions
+        handle_circle_rectangle_collisions(rectangles, rectangle_count, circles, circle_count,
+                                         boundary_left, boundary_right, boundary_top, boundary_bottom);
+
         // Draw
         BeginDrawing();
             ClearBackground(BACKGROUND_COLOR);
             
             // Begin 2D mode with camera
             BeginMode2D(camera);
+                // Draw rectangles first (so they appear behind circles)
+                draw_rectangles(rectangles, rectangle_count);
+                
                 // Draw boundary rectangle
                 DrawRectangleLinesEx((Rectangle){
                     boundary_left,

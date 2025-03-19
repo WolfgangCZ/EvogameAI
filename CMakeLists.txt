@@ -11,6 +11,7 @@ add_subdirectory(raylib)
 set(SOURCES
     main.c
     circle.c
+    rectangle.c
     camera.c
     debug.c
 )

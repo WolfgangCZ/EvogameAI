@@ -73,25 +73,37 @@ void handle_boundary_collision(Circle* circle, float left, float right, float to
     }
 }
 
+// Initialize a circle with random position and zero initial speed
+void init_circle(Circle* circle, float boundary_left, float boundary_right, float boundary_top, float boundary_bottom) {
+    // Random position within boundaries
+    circle->position.x = GetRandomValue(boundary_left + CIRCLE_RADIUS, boundary_right - CIRCLE_RADIUS);
+    circle->position.y = GetRandomValue(boundary_top + CIRCLE_RADIUS, boundary_bottom - CIRCLE_RADIUS);
+    
+    // Zero initial speed
+    circle->speed.x = 0.0f;
+    circle->speed.y = 0.0f;
+    
+    // Fixed radius
+    circle->radius = CIRCLE_RADIUS;
+    
+    // Fixed green color for all circles
+    circle->color = GREEN;
+    
+    // Random facing direction
+    circle->facing_direction = GetRandomValue(0, 360);
+    
+    // Initialize trail
+    for (int i = 0; i < TRAIL_LENGTH; i++) {
+        circle->trail[i] = circle->position;
+    }
+    circle->trail_index = 0;
+}
+
 // Initialize circles array
 void initialize_circles(Circle* circles, int* circle_count, float boundary_left, float boundary_right, 
                       float boundary_top, float boundary_bottom) {
-    *circle_count = 0;
-    for (int i = 0; i < INITIAL_CIRCLES; i++) {
-        circles[i].position.x = random_float(boundary_left, boundary_right);
-        circles[i].position.y = random_float(boundary_top, boundary_bottom);
-        circles[i].speed = random_speed();
-        circles[i].color = random_color();
-        circles[i].radius = random_float(MIN_RADIUS, MAX_RADIUS);
-        circles[i].facing_direction = random_float(0, 360);  // Random initial facing direction
-        circles[i].trail_index = 0;
-        
-        // Initialize trail with current position
-        for (int j = 0; j < TRAIL_LENGTH; j++) {
-            circles[i].trail[j] = circles[i].position;
-        }
-        
-        (*circle_count)++;
+    for (int i = 0; i < *circle_count; i++) {
+        init_circle(&circles[i], boundary_left, boundary_right, boundary_top, boundary_bottom);
     }
 }
 
