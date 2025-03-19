@@ -1,74 +1,97 @@
-# Simple Raylib Game
+# Evolution Game
 
-A simple game built with raylib that features bouncing circles with physics and collision detection.
+A simple 2D game built with raylib where you control circles that interact with yellow rectangles in an evolving environment.
 
 ## Features
 
-- Multiple bouncing circles with random attributes
-- Realistic physics and collision detection
-- Dynamic circle creation
-- Debug mode with movement indicators and performance metrics
-- Smooth animations and colorful visuals
+- Control multiple circles with different behaviors
+- Circles can be selected and controlled individually
+- Yellow rectangles that respawn when hit by circles or clicked
+- Camera controls for zooming and panning
+- Grid system for visual reference
+- Debug information display
+- Smooth physics with friction
 
 ## Controls
 
-- **A Key (Hold)**: Create new circles at the mouse cursor position
-- **D Key**: Toggle debug mode
-  - Shows direction indicators for each circle
-  - Displays FPS counter
-  - Shows current number of circles
-  - Displays helpful instructions
+### Circle Controls
+- `Left Mouse Button`: Select a circle
+- `W/S`: Increase/Decrease selected circle's speed
+- `A/D`: Rotate selected circle's facing direction
+- `Space`: Spawn a new circle
+- `R`: Reset all circles to initial positions
+- `Tab`: Switch between selected circles
+
+### Camera Controls
+- `Mouse Wheel`: Zoom in/out
+- `Right Mouse Button + Drag`: Pan camera
+- `Right Mouse Button + Mouse Wheel`: Zoom in/out
+
+### Rectangle Interaction
+- `Left Mouse Button`: Click on a yellow rectangle to make it respawn at a random location
+- Circles will automatically make rectangles respawn on collision
 
 ## Building
 
 ### Prerequisites
+- CMake
+- A C compiler (gcc, clang, or MSVC)
+- raylib library
 
-- CMake (version 3.10 or higher)
-- A C compiler (GCC, Clang, or MSVC)
-- Git (for cloning the repository)
-
-### Build Instructions
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/evogame.git
-   cd evogame
-   ```
-
-2. Create a build directory and navigate to it:
+### Build Steps
+1. Create a build directory:
    ```bash
    mkdir build
    cd build
    ```
 
-3. Generate the build files:
+2. Configure with CMake:
    ```bash
    cmake ..
    ```
 
-4. Build the project:
+3. Build the project:
    ```bash
    cmake --build . --config Release
    ```
 
-The executable will be created in the `build/Release` directory.
+4. Run the game:
+   ```bash
+   ./Release/SimpleRaylibGame
+   ```
 
-## Running the Game
+## Game Elements
 
-After building, you can run the game by executing the generated executable:
+### Circles
+- Green circles that can be controlled
+- Each circle has:
+  - Position
+  - Speed
+  - Facing direction (indicated by a dot)
+  - Fixed size (15 units radius)
+  - Friction for smooth movement
 
-```bash
-./Release/SimpleRaylibGame
-```
+### Rectangles
+- Yellow rectangles that add interactivity
+- Fixed size (1.5x circle radius)
+- Respawn at random locations when:
+  - Hit by a circle
+  - Clicked by the player
+- Drawn behind circles for better visibility
 
-## Game Settings
+### Environment
+- Grid system for visual reference
+- Camera controls for exploring the game world
+- Debug information showing selected circle's properties
 
-- Initial number of circles: 10
-- Maximum number of circles: 10000
-- Circle radius range: 4-8 pixels
-- Circle speed range: 2-5 pixels per frame
-- Spawn rate: 50 circles per second (while holding 'A' key)
+## Development
+
+The project is structured into several components:
+- `main.c`: Main game loop and initialization
+- `circle.c/h`: Circle management and physics
+- `rectangle.c/h`: Rectangle management and collision detection
+- `config.h`: Game configuration and constants
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is open source and available under the MIT License. 
