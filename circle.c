@@ -99,16 +99,36 @@ void initialize_circles(Circle* circles, int* circle_count, float boundary_left,
 void update_circles(Circle* circles, int circle_count, float boundary_left, float boundary_right, 
                   float boundary_top, float boundary_bottom) {
     for (int i = 0; i < circle_count; i++) {
-        // Store current position in trail
-        circles[i].trail[circles[i].trail_index] = circles[i].position;
-        circles[i].trail_index = (circles[i].trail_index + 1) % TRAIL_LENGTH;
+        // Apply friction to slow down the circle
+        float friction = 0.98f;  // Friction coefficient (0.98 means 2% speed loss per frame)
+        circles[i].speed.x *= friction;
+        circles[i].speed.y *= friction;
 
         // Update position
         circles[i].position.x += circles[i].speed.x;
         circles[i].position.y += circles[i].speed.y;
 
-        // Check boundary collisions
-        handle_boundary_collision(&circles[i], boundary_left, boundary_right, boundary_top, boundary_bottom);
+        // Update trail
+        circles[i].trail[circles[i].trail_index] = circles[i].position;
+        circles[i].trail_index = (circles[i].trail_index + 1) % TRAIL_LENGTH;
+
+        // Handle boundary collisions
+        if (circles[i].position.x - circles[i].radius < boundary_left) {
+            circles[i].position.x = boundary_left + circles[i].radius;
+            circles[i].speed.x = -circles[i].speed.x * 0.8f;  // Bounce with energy loss
+        }
+        if (circles[i].position.x + circles[i].radius > boundary_right) {
+            circles[i].position.x = boundary_right - circles[i].radius;
+            circles[i].speed.x = -circles[i].speed.x * 0.8f;  // Bounce with energy loss
+        }
+        if (circles[i].position.y - circles[i].radius < boundary_top) {
+            circles[i].position.y = boundary_top + circles[i].radius;
+            circles[i].speed.y = -circles[i].speed.y * 0.8f;  // Bounce with energy loss
+        }
+        if (circles[i].position.y + circles[i].radius > boundary_bottom) {
+            circles[i].position.y = boundary_bottom - circles[i].radius;
+            circles[i].speed.y = -circles[i].speed.y * 0.8f;  // Bounce with energy loss
+        }
 
         // Check circle collisions with broad and narrow phase
         for (int j = i + 1; j < circle_count; j++) {
@@ -167,15 +187,13 @@ void draw_circles(const Circle* circles, int circle_count, bool show_debug) {
         // Draw the current circle
         DrawCircleV(circles[i].position, circles[i].radius, circles[i].color);
         
-        // Draw facing direction indicator only in debug mode
-        if (show_debug) {
-            float facing_line_length = circles[i].radius * 1.2f;
-            Vector2 facing_end_pos = {
-                circles[i].position.x + cosf(circles[i].facing_direction * DEG2RAD) * facing_line_length,
-                circles[i].position.y + sinf(circles[i].facing_direction * DEG2RAD) * facing_line_length
-            };
-            DrawLineEx(circles[i].position, facing_end_pos, 2, BLUE);
-        }
+        // Draw facing direction as a dot closer to the center of the circle
+        float facing_dot_radius = circles[i].radius * 0.4f;  // Reduced to 40% of circle radius
+        Vector2 facing_dot_pos = {
+            circles[i].position.x + cosf(circles[i].facing_direction * DEG2RAD) * (circles[i].radius * 0.7f),  // 70% of radius from center
+            circles[i].position.y + sinf(circles[i].facing_direction * DEG2RAD) * (circles[i].radius * 0.7f)
+        };
+        DrawCircleV(facing_dot_pos, facing_dot_radius, BACKGROUND_COLOR);
     }
 }
 

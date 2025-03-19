@@ -28,8 +28,8 @@ int main(void)
     int circle_count = 0;
     float spawn_timer = 0.0f;
     bool show_debug = false;  // Debug mode flag
-    int selected_circle_index = -1;  // -1 means no circle is selected
-    float speed_adjustment = 50.0f;  // Speed change per frame
+    int selected_circle_index = 0;  // Start with first circle selected
+    float speed_adjustment = 50.0f;  // Speed change per second (scaled by delta_time)
     float rotation_speed = 180.0f;  // Degrees per second
     
     // Initialize initial circles
@@ -73,20 +73,20 @@ int main(void)
             Circle* selected = &circles[selected_circle_index];
             float current_speed = sqrtf(selected->speed.x * selected->speed.x + selected->speed.y * selected->speed.y);
             
-            // Speed control with W/S
+            // Speed control
             if (IsKeyDown(KEY_W)) {
-                // Increase speed while maintaining direction
-                float speed_multiplier = (current_speed + speed_adjustment * delta_time) / current_speed;
-                selected->speed.x *= speed_multiplier;
-                selected->speed.y *= speed_multiplier;
+                // Add speed in the facing direction
+                float angle_rad = selected->facing_direction * DEG2RAD;
+                float speed_change = speed_adjustment * delta_time;  // Scale by delta_time
+                selected->speed.x += cosf(angle_rad) * speed_change;
+                selected->speed.y += sinf(angle_rad) * speed_change;
             }
-            else if (IsKeyDown(KEY_S)) {
-                // Decrease speed while maintaining direction
-                float speed_multiplier = (current_speed - speed_adjustment * delta_time) / current_speed;
-                if (speed_multiplier > 0) {  // Prevent negative speed
-                    selected->speed.x *= speed_multiplier;
-                    selected->speed.y *= speed_multiplier;
-                }
+            if (IsKeyDown(KEY_S)) {
+                // Reduce speed in the facing direction
+                float angle_rad = selected->facing_direction * DEG2RAD;
+                float speed_change = speed_adjustment * delta_time;  // Scale by delta_time
+                selected->speed.x -= cosf(angle_rad) * speed_change;
+                selected->speed.y -= sinf(angle_rad) * speed_change;
             }
 
             // Direction control with A/D
@@ -126,7 +126,7 @@ int main(void)
 
         // Draw
         BeginDrawing();
-            ClearBackground((Color){ 40, 40, 40, 255 });  // Soft dark gray
+            ClearBackground(BACKGROUND_COLOR);
             
             // Begin 2D mode with camera
             BeginMode2D(camera);
@@ -171,7 +171,25 @@ int main(void)
 
             // Draw debug information
             if (show_debug) {
-                DrawDebugInfo(GetFPS(), circle_count, camera.zoom);
+                const char* debug_text = TextFormat(
+                    "FPS: %d\n"
+                    "Circles: %d\n"
+                    "Selected: %d\n"
+                    "Selected Size: %.1f\n"
+                    "Selected Speed: %.1f\n"
+                    "Camera: %.1f, %.1f\n"
+                    "Zoom: %.2f",
+                    GetFPS(),
+                    circle_count,
+                    selected_circle_index,
+                    selected_circle_index >= 0 ? circles[selected_circle_index].radius : 0.0f,
+                    selected_circle_index >= 0 ? sqrtf(circles[selected_circle_index].speed.x * circles[selected_circle_index].speed.x + 
+                                                    circles[selected_circle_index].speed.y * circles[selected_circle_index].speed.y) : 0.0f,
+                    camera.target.x,
+                    camera.target.y,
+                    camera.zoom
+                );
+                DrawText(debug_text, 10, 10, 20, WHITE);
             }
         EndDrawing();
     }
