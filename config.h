@@ -9,7 +9,7 @@
 #define TARGET_FPS 60
 
 // Game area boundaries (relative to window size)
-#define BOUNDARY_MARGIN 50
+#define BOUNDARY_MARGIN 50.0f
 
 // Circle configuration
 #define CIRCLE_COUNT 5
@@ -17,6 +17,10 @@
 
 // Colors
 #define BACKGROUND_COLOR DARKGRAY
+#define BOUNDARY_COLOR WHITE
+#define CIRCLE_COLOR GREEN
+#define SELECTED_CIRCLE_COLOR GOLD
+#define FOOD_COLOR YELLOW
 
 // Game settings
 #define INITIAL_CIRCLES 10
@@ -25,12 +29,12 @@
 #define TRAIL_LENGTH 5
 
 // Circle parameters
-#define MAX_CIRCLES 100
+#define MAX_CIRCLES 10000  // Increased from 100 to 10000
 #define SPAWN_DELAY 0.02f  // Time between spawns in seconds (50 circles per second)
 #define DIRECTION_LINE_LENGTH 15.0f  // Base length for direction indicator
 
 // Boundary rectangle parameters
-#define BOUNDARY_THICKNESS 2  // Thickness of boundary lines
+#define BOUNDARY_THICKNESS 2.0f
 
 // Zoom parameters
 #define MIN_ZOOM 0.5f
