@@ -90,13 +90,13 @@ void init_circle(Circle* circle, float boundary_left, float boundary_right, floa
     circle->color = GREEN;
     
     // Random facing direction
-    circle->facing_direction = GetRandomValue(0, 360);
+    circle->facing_angle = random_float(0.0f, 2.0f * PI);
     
-    // Initialize trail
-    for (int i = 0; i < TRAIL_LENGTH; i++) {
-        circle->trail[i] = circle->position;
-    }
-    circle->trail_index = 0;
+    // Initialize health
+    circle->health = MAX_HEALTH;
+    
+    // Initialize selection state
+    circle->selected = false;
 }
 
 // Initialize circles array
@@ -120,27 +120,12 @@ void update_circles(Circle* circles, int circle_count, float boundary_left, floa
         circles[i].position.x += circles[i].speed.x;
         circles[i].position.y += circles[i].speed.y;
 
-        // Update trail
-        circles[i].trail[circles[i].trail_index] = circles[i].position;
-        circles[i].trail_index = (circles[i].trail_index + 1) % TRAIL_LENGTH;
-
         // Handle boundary collisions
-        if (circles[i].position.x - circles[i].radius < boundary_left) {
-            circles[i].position.x = boundary_left + circles[i].radius;
-            circles[i].speed.x = -circles[i].speed.x * 0.8f;  // Bounce with energy loss
-        }
-        if (circles[i].position.x + circles[i].radius > boundary_right) {
-            circles[i].position.x = boundary_right - circles[i].radius;
-            circles[i].speed.x = -circles[i].speed.x * 0.8f;  // Bounce with energy loss
-        }
-        if (circles[i].position.y - circles[i].radius < boundary_top) {
-            circles[i].position.y = boundary_top + circles[i].radius;
-            circles[i].speed.y = -circles[i].speed.y * 0.8f;  // Bounce with energy loss
-        }
-        if (circles[i].position.y + circles[i].radius > boundary_bottom) {
-            circles[i].position.y = boundary_bottom - circles[i].radius;
-            circles[i].speed.y = -circles[i].speed.y * 0.8f;  // Bounce with energy loss
-        }
+        handle_boundary_collision(&circles[i], boundary_left, boundary_right, boundary_top, boundary_bottom);
+
+        // Drain health over time
+        circles[i].health -= HEALTH_DRAIN_RATE;
+        if (circles[i].health < 0.0f) circles[i].health = 0.0f;  // Ensure health doesn't go below 0
 
         // Check circle collisions with broad and narrow phase
         for (int j = i + 1; j < circle_count; j++) {
@@ -180,42 +165,57 @@ void update_circles(Circle* circles, int circle_count, float boundary_left, floa
 // Draw circles and their direction indicators
 void draw_circles(const Circle* circles, int circle_count, bool show_debug) {
     for (int i = 0; i < circle_count; i++) {
-        // Draw trail (previous positions)
-        for (int j = 1; j < TRAIL_LENGTH; j++) {  // Start from 1 to skip current position
-            // Calculate trail index (most recent first)
-            int trail_index = (circles[i].trail_index - j + TRAIL_LENGTH) % TRAIL_LENGTH;
-            
-            // Calculate opacity (most recent = highest opacity)
-            float alpha = 0.8f * (1.0f - (float)j / TRAIL_LENGTH);
-            if (j == TRAIL_LENGTH - 1) alpha = 0.0f;  // Force last shadow to be completely transparent
-            
-            Color trail_color = circles[i].color;
-            trail_color.a = (unsigned char)(alpha * 255);  // Apply transparency
-            
-            // Draw trail circle
-            DrawCircleV(circles[i].trail[trail_index], circles[i].radius, trail_color);
-        }
+        draw_circle(&circles[i], show_debug);
+    }
+}
+
+void draw_circle(const Circle* circle, bool show_debug) {
+    // Draw the main circle
+    DrawCircleV(circle->position, circle->radius, circle->color);
+    
+    // Draw facing direction dot
+    float facing_dot_radius = circle->radius * 0.4f;  // Reduced to 40% of circle radius
+    Vector2 facing_dot_pos = {
+        circle->position.x + cosf(circle->facing_angle) * (circle->radius * 0.7f),  // 70% of radius from center
+        circle->position.y + sinf(circle->facing_angle) * (circle->radius * 0.7f)
+    };
+    DrawCircleV(facing_dot_pos, facing_dot_radius, BACKGROUND_COLOR);
+    
+    // Draw selection highlight if selected
+    if (circle->selected) {
+        DrawCircleLinesV(circle->position, circle->radius + 2.0f, WHITE);
+    }
+    
+    // Draw health bar and text in debug mode
+    if (show_debug) {
+        // Health bar background (red)
+        float bar_width = circle->radius * 2.0f;
+        float bar_height = 6.0f;  // Made slightly taller
+        float bar_y = circle->position.y - circle->radius - 15.0f;  // Moved up slightly
+        DrawRectangle(circle->position.x - circle->radius, bar_y, bar_width, bar_height, RED);
         
-        // Draw the current circle
-        DrawCircleV(circles[i].position, circles[i].radius, circles[i].color);
+        // Health bar fill (green)
+        float health_width = bar_width * (circle->health / MAX_HEALTH);
+        DrawRectangle(circle->position.x - circle->radius, bar_y, health_width, bar_height, GREEN);
         
-        // Draw facing direction as a dot closer to the center of the circle
-        float facing_dot_radius = circles[i].radius * 0.4f;  // Reduced to 40% of circle radius
-        Vector2 facing_dot_pos = {
-            circles[i].position.x + cosf(circles[i].facing_direction * DEG2RAD) * (circles[i].radius * 0.7f),  // 70% of radius from center
-            circles[i].position.y + sinf(circles[i].facing_direction * DEG2RAD) * (circles[i].radius * 0.7f)
-        };
-        DrawCircleV(facing_dot_pos, facing_dot_radius, BACKGROUND_COLOR);
+        // Health text
+        char health_text[32];
+        sprintf(health_text, "%.1f", circle->health);
+        Vector2 text_size = MeasureTextEx(GetFontDefault(), health_text, 12, 1);  // Made text slightly larger
+        DrawText(health_text, 
+                circle->position.x - text_size.x/2, 
+                bar_y - text_size.y - 2, 
+                12, WHITE);  // Made text slightly larger
     }
 }
 
 void rotate_circle_direction(Circle* circle, float rotation_degrees) {
     // Update facing direction
-    circle->facing_direction += rotation_degrees;
+    circle->facing_angle += rotation_degrees * DEG2RAD;
     
     // Keep angle between 0 and 360 degrees
-    while (circle->facing_direction >= 360.0f) circle->facing_direction -= 360.0f;
-    while (circle->facing_direction < 0.0f) circle->facing_direction += 360.0f;
+    while (circle->facing_angle >= 2.0f * PI) circle->facing_angle -= 2.0f * PI;
+    while (circle->facing_angle < 0.0f) circle->facing_angle += 2.0f * PI;
     
     // Note: We no longer update the speed vector here
     // The movement direction remains independent of the facing direction

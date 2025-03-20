@@ -20,12 +20,12 @@
 
 // Game settings
 #define INITIAL_CIRCLES 10
-#define MIN_SPEED 20
-#define MAX_SPEED 40
+#define MIN_SPEED 50.0f
+#define MAX_SPEED 200.0f
 #define TRAIL_LENGTH 5
 
 // Circle parameters
-#define MAX_CIRCLES 10000
+#define MAX_CIRCLES 100
 #define SPAWN_DELAY 0.02f  // Time between spawns in seconds (50 circles per second)
 #define DIRECTION_LINE_LENGTH 15.0f  // Base length for direction indicator
 
@@ -43,5 +43,10 @@
 // Screen dimensions
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
+
+// Health settings
+#define MAX_HEALTH 50.0f
+#define HEALTH_DRAIN_RATE 0.1f  // Health lost per frame
+#define HEALTH_GAIN_FROM_FOOD 20.0f  // Health gained when eating a rectangle
 
 #endif // CONFIG_H 

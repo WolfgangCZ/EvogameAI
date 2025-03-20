@@ -3,16 +3,16 @@
 
 #include "raylib.h"
 
-#define TRAIL_LENGTH 5  // Number of previous positions to store
+#define MAX_HEALTH 50.0f
 
 typedef struct {
     Vector2 position;
     Vector2 speed;
-    Color color;
     float radius;
-    float facing_direction;  // Direction the circle is facing (in degrees)
-    Vector2 trail[TRAIL_LENGTH];  // Array to store previous positions
-    int trail_index;  // Current index in the trail array
+    Color color;
+    bool selected;
+    float facing_angle;  // Angle in radians
+    float health;       // Current health of the circle
 } Circle;
 
 // Helper functions
@@ -32,6 +32,7 @@ void initialize_circles(Circle* circles, int* circle_count, float boundary_left,
 void update_circles(Circle* circles, int circle_count, float boundary_left, float boundary_right, 
                   float boundary_top, float boundary_bottom);
 void draw_circles(const Circle* circles, int circle_count, bool show_debug);
-void rotate_circle_direction(Circle* circle, float rotation_degrees);  // New function for direction rotation
+void draw_circle(const Circle* circle, bool show_debug);
+void rotate_circle_direction(Circle* circle, float rotation_degrees);
 
 #endif // CIRCLE_H 

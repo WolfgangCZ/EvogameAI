@@ -31,4 +31,7 @@ void handle_circle_rectangle_collisions(GameRectangle* rectangles, int rectangle
                                       float boundary_left, float boundary_right,
                                       float boundary_top, float boundary_bottom);
 
+void respawn_rectangle(GameRectangle* rect, float boundary_left, float boundary_right, 
+                      float boundary_top, float boundary_bottom);
+
 #endif // RECTANGLE_H 

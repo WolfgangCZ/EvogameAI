@@ -87,17 +87,15 @@ int main(void)
             // Speed control
             if (IsKeyDown(KEY_W)) {
                 // Add speed in the facing direction
-                float angle_rad = selected->facing_direction * DEG2RAD;
                 float speed_change = speed_adjustment * delta_time;  // Scale by delta_time
-                selected->speed.x += cosf(angle_rad) * speed_change;
-                selected->speed.y += sinf(angle_rad) * speed_change;
+                selected->speed.x += cosf(selected->facing_angle) * speed_change;
+                selected->speed.y += sinf(selected->facing_angle) * speed_change;
             }
             if (IsKeyDown(KEY_S)) {
                 // Reduce speed in the facing direction
-                float angle_rad = selected->facing_direction * DEG2RAD;
                 float speed_change = speed_adjustment * delta_time;  // Scale by delta_time
-                selected->speed.x -= cosf(angle_rad) * speed_change;
-                selected->speed.y -= sinf(angle_rad) * speed_change;
+                selected->speed.x -= cosf(selected->facing_angle) * speed_change;
+                selected->speed.y -= sinf(selected->facing_angle) * speed_change;
             }
 
             // Direction control with A/D
@@ -123,7 +121,8 @@ int main(void)
                     circles[circle_count].speed = (Vector2){0.0f, 0.0f};  // Zero initial speed
                     circles[circle_count].color = random_color();
                     circles[circle_count].radius = CIRCLE_RADIUS;  // Use fixed circle radius
-                    circles[circle_count].facing_direction = random_float(0, 360);
+                    circles[circle_count].facing_angle = random_float(0.0f, 2.0f * PI);
+                    circles[circle_count].health = MAX_HEALTH;  // Initialize health
                     circle_count++;
                 }
                 spawn_timer = 0.0f;
@@ -136,8 +135,27 @@ int main(void)
         update_circles(circles, circle_count, boundary_left, boundary_right, boundary_top, boundary_bottom);
 
         // Check for circle-rectangle collisions
-        handle_circle_rectangle_collisions(rectangles, rectangle_count, circles, circle_count,
-                                         boundary_left, boundary_right, boundary_top, boundary_bottom);
+        for (int i = 0; i < circle_count; i++) {
+            Circle* circle = &circles[i];
+            for (int j = 0; j < rectangle_count; j++) {
+                GameRectangle* rect = &rectangles[j];
+                
+                // Check if circle is close enough to rectangle
+                float dx = circle->position.x - rect->position.x;
+                float dy = circle->position.y - rect->position.y;
+                float distance = sqrtf(dx * dx + dy * dy);
+                
+                // If circle is close enough to eat the rectangle
+                if (distance < (circle->radius + RECTANGLE_SIZE/2)) {
+                    // Replenish health
+                    circle->health += HEALTH_GAIN_FROM_FOOD;
+                    if (circle->health > MAX_HEALTH) circle->health = MAX_HEALTH;
+                    
+                    // Respawn rectangle at new position
+                    respawn_rectangle(rect, boundary_left, boundary_right, boundary_top, boundary_bottom);
+                }
+            }
+        }
 
         // Draw
         BeginDrawing();
@@ -189,25 +207,12 @@ int main(void)
 
             // Draw debug information
             if (show_debug) {
-                const char* debug_text = TextFormat(
-                    "FPS: %d\n"
-                    "Circles: %d\n"
-                    "Selected: %d\n"
-                    "Selected Size: %.1f\n"
-                    "Selected Speed: %.1f\n"
-                    "Camera: %.1f, %.1f\n"
-                    "Zoom: %.2f",
-                    GetFPS(),
-                    circle_count,
-                    selected_circle_index,
-                    selected_circle_index >= 0 ? circles[selected_circle_index].radius : 0.0f,
-                    selected_circle_index >= 0 ? sqrtf(circles[selected_circle_index].speed.x * circles[selected_circle_index].speed.x + 
-                                                    circles[selected_circle_index].speed.y * circles[selected_circle_index].speed.y) : 0.0f,
-                    camera.target.x,
-                    camera.target.y,
-                    camera.zoom
-                );
-                DrawText(debug_text, 10, 10, 20, WHITE);
+                DrawRectangle(10, 10, 200, 100, Fade(BLACK, 0.5f));
+                DrawText("Debug Info:", 20, 20, 20, WHITE);
+                DrawText(TextFormat("Selected Circle: %d", selected_circle_index), 20, 45, 20, WHITE);
+                if (selected_circle_index >= 0) {
+                    DrawText(TextFormat("Health: %.1f", circles[selected_circle_index].health), 20, 70, 20, WHITE);
+                }
             }
         EndDrawing();
     }

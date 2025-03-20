@@ -15,8 +15,14 @@ bool is_point_in_rectangle(Vector2 point, const GameRectangle* rect) {
 // Function to respawn a rectangle at a new random position
 void respawn_rectangle(GameRectangle* rect, float boundary_left, float boundary_right, 
                       float boundary_top, float boundary_bottom) {
-    rect->position.x = boundary_left + (rand() % (int)(boundary_right - boundary_left - RECTANGLE_SIZE));
-    rect->position.y = boundary_top + (rand() % (int)(boundary_bottom - boundary_top - RECTANGLE_SIZE));
+    // Generate new random position within boundaries
+    rect->position.x = GetRandomValue(boundary_left + RECTANGLE_SIZE/2, boundary_right - RECTANGLE_SIZE/2);
+    rect->position.y = GetRandomValue(boundary_top + RECTANGLE_SIZE/2, boundary_bottom - RECTANGLE_SIZE/2);
+    
+    // Keep the same size and color
+    rect->width = RECTANGLE_SIZE;
+    rect->height = RECTANGLE_SIZE;
+    rect->color = YELLOW;  // Keep the food color yellow
 }
 
 // Function to handle rectangle clicks and respawning
