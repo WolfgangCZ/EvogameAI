@@ -6,11 +6,20 @@
 #include "rectangle.h"
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
 int main(void)
 {
-    // Initialize window
+    // Initialize random seed
+    srand(time(NULL));
+
+    printf("Starting initialization...\n");
+
+    // Initialize window and camera
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Bouncing Circles");
+    SetTargetFPS(60);
+
+    printf("Window initialized\n");
 
     // Calculate boundary rectangle
     const float boundary_left = BOUNDARY_MARGIN;
@@ -21,36 +30,35 @@ int main(void)
     // Initialize camera
     Camera2D camera = initialize_camera();
 
-    // Initialize random seed
-    srand(time(NULL));
+    printf("Camera initialized\n");
 
     // Initialize circles
-    Circle circles[CIRCLE_COUNT];
-    int circle_count = CIRCLE_COUNT;
+    Circle circles[MAX_CIRCLES];
+    int circle_count = INITIAL_CIRCLES;
     float spawn_timer = 0.0f;
     bool show_debug = false;  // Debug mode flag
     int selected_circle_index = 0;  // Start with first circle selected
     float speed_adjustment = 50.0f;  // Speed change per second (scaled by delta_time)
     float rotation_speed = 180.0f;  // Degrees per second
     
+    printf("Initializing circles...\n");
     // Initialize circles
-    // Initialize initial circles
     initialize_circles(circles, &circle_count, boundary_left, boundary_right, boundary_top, boundary_bottom);
+
+    printf("Circles initialized\n");
 
     // Initialize rectangles
     GameRectangle rectangles[MAX_RECTANGLES];
     int rectangle_count;
     init_rectangles(rectangles, &rectangle_count, boundary_left, boundary_right, boundary_top, boundary_bottom);
 
-    SetTargetFPS(60);
+    printf("Starting main game loop\n");
 
     // Main game loop
     while (!WindowShouldClose())
     {
-        // Handle camera movement and zoom
+        // Delta time
         float delta_time = GetFrameTime();
-        update_game_camera(&camera, delta_time);
-        update_camera_zoom(&camera, delta_time);
 
         // Toggle debug mode with 'F1' key
         if (IsKeyPressed(KEY_F1)) {
@@ -107,29 +115,9 @@ int main(void)
             }
         }
 
-        // Add new circles while holding 'SPACE' key
-        if (IsKeyDown(KEY_SPACE) && circle_count < MAX_CIRCLES) {
-            spawn_timer += delta_time;
-            if (spawn_timer >= SPAWN_DELAY) {
-                // Convert mouse position from screen coordinates to world coordinates
-                Vector2 mouse_pos = GetScreenToWorld2D(GetMousePosition(), camera);
-                
-                // Only spawn if within boundary
-                if (mouse_pos.x >= boundary_left && mouse_pos.x <= boundary_right &&
-                    mouse_pos.y >= boundary_top && mouse_pos.y <= boundary_bottom) {
-                    circles[circle_count].position = mouse_pos;
-                    circles[circle_count].speed = (Vector2){0.0f, 0.0f};  // Zero initial speed
-                    circles[circle_count].color = random_color();
-                    circles[circle_count].radius = CIRCLE_RADIUS;  // Use fixed circle radius
-                    circles[circle_count].facing_angle = random_float(0.0f, 2.0f * PI);
-                    circles[circle_count].health = MAX_HEALTH;  // Initialize health
-                    circle_count++;
-                }
-                spawn_timer = 0.0f;
-            }
-        } else {
-            spawn_timer = 0.0f;
-        }
+        // Update camera
+        update_game_camera(&camera, delta_time);
+        update_camera_zoom(&camera, delta_time);
 
         // Update circles
         update_circles(circles, circle_count, boundary_left, boundary_right, boundary_top, boundary_bottom);
@@ -157,6 +145,25 @@ int main(void)
             }
         }
 
+        // Check if space key is pressed to spawn a new circle
+        if (IsKeyPressed(KEY_SPACE) && circle_count < MAX_CIRCLES) {
+            // Convert mouse position from screen coordinates to world coordinates
+            Vector2 mouse_pos = GetScreenToWorld2D(GetMousePosition(), camera);
+            
+            // Only spawn if within boundary
+            if (mouse_pos.x >= boundary_left && mouse_pos.x <= boundary_right &&
+                mouse_pos.y >= boundary_top && mouse_pos.y <= boundary_bottom) {
+                circles[circle_count].position = mouse_pos;
+                circles[circle_count].speed = (Vector2){0.0f, 0.0f};  // Zero initial speed
+                circles[circle_count].color = GREEN;
+                circles[circle_count].radius = CIRCLE_RADIUS;  // Use fixed circle radius
+                circles[circle_count].facing_angle = random_float(0.0f, 2.0f * PI);
+                circles[circle_count].health = MAX_HEALTH;  // Initialize health
+                circle_count++;
+                printf("Added new circle. Total count: %d\n", circle_count);
+            }
+        }
+
         // Draw
         BeginDrawing();
             ClearBackground(BACKGROUND_COLOR);
@@ -178,7 +185,7 @@ int main(void)
                 draw_circles(circles, circle_count, show_debug);
 
                 // Draw selection indicator if a circle is selected
-                if (selected_circle_index >= 0) {
+                if (selected_circle_index >= 0 && selected_circle_index < circle_count) {
                     Circle* selected = &circles[selected_circle_index];
                     float padding = selected->radius * 0.5f;  // Add 50% padding
                     float size = (selected->radius + padding) * 2;
@@ -209,16 +216,16 @@ int main(void)
             if (show_debug) {
                 DrawRectangle(10, 10, 200, 100, Fade(BLACK, 0.5f));
                 DrawText("Debug Info:", 20, 20, 20, WHITE);
-                DrawText(TextFormat("Selected Circle: %d", selected_circle_index), 20, 45, 20, WHITE);
-                if (selected_circle_index >= 0) {
-                    DrawText(TextFormat("Health: %.1f", circles[selected_circle_index].health), 20, 70, 20, WHITE);
+                DrawText(TextFormat("Circle Count: %d/%d", circle_count, MAX_CIRCLES), 20, 45, 20, WHITE);
+                DrawText(TextFormat("Selected Circle: %d", selected_circle_index), 20, 70, 20, WHITE);
+                if (selected_circle_index >= 0 && selected_circle_index < circle_count) {
+                    DrawText(TextFormat("Health: %.1f", circles[selected_circle_index].health), 20, 95, 20, WHITE);
                 }
             }
         EndDrawing();
     }
 
     // Cleanup
-    free(circles);
     CloseWindow();
     return 0;
 } 
