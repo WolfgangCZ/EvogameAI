@@ -1,0 +1,30 @@
+# Build output
+build/
+*.exe
+*.o
+*.a
+*.so
+*.dll
+*.pdb
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+Makefile.cmake
+
+# IDE and editor
+.vscode/
+.idea/
+*.suo
+*.user
+*.ncb
+*.sdf
+*.opensdf
+.vs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
