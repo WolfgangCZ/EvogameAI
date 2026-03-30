@@ -1,0 +1,10 @@
+^D:\SOURCES\_PLAYGROUND\WVO2\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Sources/_playground/wvo2 -BD:/Sources/_playground/wvo2/build --check-stamp-file D:/Sources/_playground/wvo2/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

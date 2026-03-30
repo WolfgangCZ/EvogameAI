@@ -1,0 +1,10 @@
+^D:\SOURCES\_PLAYGROUND\WVO2\BUILD\_DEPS\RAYGUI-SUBBUILD\CMAKEFILES\A80599D0DBD730625AE8A8AB785FFF00\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Sources/_playground/wvo2/build/_deps/raygui-subbuild -BD:/Sources/_playground/wvo2/build/_deps/raygui-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Sources/_playground/wvo2/build/_deps/raygui-subbuild/raygui-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

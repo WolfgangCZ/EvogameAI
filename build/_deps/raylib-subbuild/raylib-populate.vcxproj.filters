@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\72f6370d86db25c5112dbbf03e0cfa65\raylib-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\c74d0215aaa8d090b217e34f95f0feb6\raylib-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\98147d6b8a315e597d2bd82c540a52a5\raylib-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Sources\_playground\wvo2\build\_deps\raylib-subbuild\CMakeFiles\raylib-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{097BABF4-CF97-37B4-85AF-2BA8673CF603}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

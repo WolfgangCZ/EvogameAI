@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/raylib-populate"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/98147d6b8a315e597d2bd82c540a52a5/raylib-populate.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/c74d0215aaa8d090b217e34f95f0feb6/raylib-populate-complete.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-build.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-configure.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-download.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-install.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-mkdir.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-patch.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-test.rule"
+		},
+		{
+			"file" : "D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/CMakeFiles/72f6370d86db25c5112dbbf03e0cfa65/raylib-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"raylib-populate"
+		],
+		"name" : "raylib-populate"
+	}
+}

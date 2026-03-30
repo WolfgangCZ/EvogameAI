@@ -1,0 +1,10 @@
+^D:\SOURCES\_PLAYGROUND\WVO2\BUILD\_DEPS\RAYLIB-SUBBUILD\CMAKEFILES\98147D6B8A315E597D2BD82C540A52A5\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Sources/_playground/wvo2/build/_deps/raylib-subbuild -BD:/Sources/_playground/wvo2/build/_deps/raylib-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Sources/_playground/wvo2/build/_deps/raylib-subbuild/raylib-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
