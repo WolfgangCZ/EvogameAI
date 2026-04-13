@@ -12,6 +12,7 @@ typedef struct {
     int      nextId;
     int      totalDeaths;
     int      totalBirths;
+    int      aliveCount;   /* cached alive creature count — updated incrementally */
     History  history;
 } Simulation;
 

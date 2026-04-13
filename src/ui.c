@@ -142,15 +142,15 @@ void UIDraw(const Simulation *s, SimSettings *settings) {
     }
     py += 30;
 
-    /* Speed multiplier slider (1..8, integer steps) */
+    /* Speed multiplier slider (1..20, integer steps) */
     float speedF = (float)settings->speedMult;
     GuiSliderBar((Rectangle){ (float)(px + 50), (float)py, (float)(panelW - 116), 16.0f },
                  "Speed",
                  TextFormat("x%d", settings->speedMult),
-                 &speedF, 1.0f, 8.0f);
+                 &speedF, 1.0f, 20.0f);
     settings->speedMult = (int)(speedF + 0.5f);
-    if (settings->speedMult < 1) settings->speedMult = 1;
-    if (settings->speedMult > 8) settings->speedMult = 8;
+    if (settings->speedMult < 1)  settings->speedMult = 1;
+    if (settings->speedMult > 20) settings->speedMult = 20;
     py += 26;
 
     /* Food max cap slider (100..8000) */

@@ -60,4 +60,15 @@
 - **Resizable window:** `FLAG_WINDOW_RESIZABLE` enabled; viewport, scissor, camera pivot all use runtime `GetScreenWidth()`/`GetScreenHeight()`; default size raised to 1600×900
 - **Larger world:** `WORLD_WIDTH`×`WORLD_HEIGHT` raised from 4000×3000 → **12000×9000**; vision range uncapped (naturally selected, min 10px)
 
+## Performance optimization ✅
+- **Spatial hash grid for food** (`World.foodGridHead/Next/Cell[GRID_CELL_COUNT]`): food sensing reduced from O(3000×8000)=24M ops → O(3000×~7)=21K ops per frame (~1000× faster)
+- **Spatial hash grid for creatures** (static `s_crGridHead/Next` rebuilt each frame): neighbor sensing reduced from O(n²)=9M ops → O(n×density)=~3K ops per frame
+- **Eating loop** also uses the food grid (3×3 cell query, eatRadius ~17px << 200px cell size)
+- **Toroidal eating bug fixed**: eating now uses `TORUS_DELTA` for correct wrap-around distance
+- **Cached `aliveCount`** on `Simulation` (incremented on birth, decremented on death detection); `SimulationAliveCount()` is now O(1) instead of O(n) — called ~5×/frame previously
+- **Cached `foodCount`** on `World`; `WorldFoodCount()` is now O(1) instead of O(8000)
+- **Squared-distance comparisons** in sensing loops: `sqrtf` called only once per creature (for the winner), not for every candidate
+- **Death detection moved before eating/reproduction**: `aliveCount` is accurate during reproduction check
+- **Speed slider raised to 20×** (was 8×)
+
 ## Milestone 8 — Biomes + Events 🔲

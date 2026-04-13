@@ -57,11 +57,19 @@
 #define REPRODUCE_COOLDOWN          8.0f    /* seconds before creature can reproduce again */
 
 /* ── Vision cost (energy/sec per unit of cone area: vision² × halfAngle) ── */
-#define VISION_COST_SCALE           0.0000001f
+#define VISION_COST_SCALE           0.000001f
 
 /* ── Size/weight energy scaling (reference radius = CREATURE_SIZE) ────── */
 /*    maxEnergy  = CREATURE_MAX_ENERGY × (size/CREATURE_SIZE)²            */
 /*    drain cost = base × (size/CREATURE_SIZE)²                           */
+
+/* ── Spatial grid (food & creature proximity queries) ─────── */
+/*    Cell size should be >= max eat radius so 3×3 cell check   */
+/*    always covers eating; vision queries scale with radius.   */
+#define GRID_CELL_SIZE  200
+#define GRID_COLS       (WORLD_WIDTH  / GRID_CELL_SIZE)   /* 60  */
+#define GRID_ROWS       (WORLD_HEIGHT / GRID_CELL_SIZE)   /* 45  */
+#define GRID_CELL_COUNT (GRID_COLS * GRID_ROWS)           /* 2700 */
 
 /* ── Simulation ──────────────────────────────────────────────── */
 #define FIXED_DT  (1.0f / 60.0f)

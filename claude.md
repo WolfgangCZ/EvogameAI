@@ -16,18 +16,17 @@ This file sets project-specific agent behavior rules and workflow expectations w
 
 ## Development workflow expectations
 1. Work in incremental steps; deliver one key feature or module per iteration.
-2. After each step, report progress in `agent.md` as a short list of completed items and next immediate task.
-3. Indicate explicitly when you want me to run and test the game in my environment.
-4. Include implementation notes and any known limitations for the current step.
-5. For any failing build or run step, provide a concise bug summary and immediate fix plan.
-6. Track progress in `PROGRESS.md` after each step
+2. Indicate explicitly when you want me to run and test the game in my environment.
+3. Include implementation notes and any known limitations for the current step.
+4. For any failing build or run step, provide a concise bug summary and immediate fix plan.
+5. Track progress in `PROGRESS.md` after each step
 
 ## Testing and verification
 1. Keep `README` or plan updated with run instructions and expected behavior.
-2. Maintain a small set of smoke tests or runtime assertions during development.
-3. Log any manual test results after each step.
+2. Log any manual test results after each step.
 
 ## Communication
 - You (assistant) must produce short, precise progress updates in markdown.
 - Do not proceed to the next major feature until confirmation that the current step works.
+- Keep answers short and technical
 - Always suggest the next most valuable step.
