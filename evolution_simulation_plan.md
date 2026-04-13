@@ -181,18 +181,46 @@ Current M1–M3 code uses hardcoded steering and a fixed energy threshold for re
 - graph area with history (line plots)
 
 ## Development Milestones
-1. Raylib window + world + random food spawn
-2. Add creatures, movement, food collect, energy drain
-3. Add death by starvation and birth by asexual reproduction
-4. Add genome -> phenotype mapping
-5. Add sexual reproduction and mutation
-6. Add carnivore/predation, fleeing
-7. Add chart UI and controls
-8. Add advanced world events, biome zones, diseases
+
+| # | Feature | Status |
+|---|---------|--------|
+| 1 | Raylib window + world + food spawn | ✅ done |
+| 2 | Creatures, movement, energy drain | ✅ done |
+| 3 | Death + asexual reproduction | ✅ done |
+| 4 | NEAT-style genome + neural network | ✅ done |
+| 5 | Sexual reproduction | ⏭ deferred |
+| 6 | Carnivores + predation + fleeing | 🔲 next |
+| 7 | Charts + UI controls (sliders, history) | ✅ done |
+| 8 | Biomes + environmental events | 🔲 planned |
+| 9 | Advanced genetics (epistasis, sexual selection) | 🔲 future |
+
+### What diverged from the original design
+- **Genome**: not a flat float array. Uses direct trait fields + a NEAT-style dynamic connection list (`NNConn conns[64]`), up to 8 hidden nodes. Structural mutations (add node, add connection, change activation) fire at 25% of weight-mutation rate.
+- **Spatial partitioning**: 200×200 px uniform grid already implemented (M1–M7 had O(n²) sensing; now O(n × local density)). See `GRID_CELL_SIZE` in `config.h`.
+- **World size**: 12 000 × 9 000 px toroidal (was originally smaller).
+- **Vision cost**: `vision² × visionAngle × 0.00005 /s` — creates genuine evolutionary trade-off between sensing range and energy budget.
+- **NN inspector**: live panel showing all node values, weights, and per-second energy cost breakdown. Opened by left-clicking a creature.
+
+### Milestone 6 — Carnivores + Predation (next)
+Planned additions:
+- `carnivory` gene [0,1] shifts creature role from herbivore → carnivore
+- Attack: carnivore within range deals `attackPower × dt` damage to smaller creature; winner gains energy proportional to prey energy
+- Flee: prey creature senses attacker via existing neighbor sensor; `CrtSin`/`CrtDst` inputs already wired
+- Corpse food: dead creatures leave a meat item (higher nutrition, limited lifetime) that carnivores prefer
+- Color: carnivore tint shifts toward red with `carnivory` gene value
+
+### Milestone 8 — Biomes + Events (planned)
+- Temperature/fertility zones affecting food density and metabolic multiplier
+- Seasonal cycles: food abundance oscillates on a configurable period
+- Random events: drought (food rate → 0 for N ticks), disease wave (energy drain spike in a region)
 
 ## Build and Run
-- use `gcc -o evo_sim main.c world.c creature.c genome.c simulation.c ui.c -lraylib -lopengl32 -lgdi32 -lwinmm`
-- or CMake/Tidy helper
+- CMake + FetchContent (auto-downloads raylib 5.5 and raygui 4.0):
+  ```
+  cmake -S . -B build -DFETCHCONTENT_UPDATES_DISCONNECTED=ON
+  cmake --build build --config Release
+  build\Release\evo_sim.exe
+  ```
 
 ## Advanced Complexity Enhancements
 - Niche specialization:

@@ -71,4 +71,11 @@
 - **Death detection moved before eating/reproduction**: `aliveCount` is accurate during reproduction check
 - **Speed slider raised to 20×** (was 8×)
 
+## Recent tuning & polish
+- **Vision cost raised to 0.00005/s** (was 0.000001 — 50× increase): large/wide FOV cones now impose meaningful evolutionary pressure; creatures are expected to converge on narrower or shorter vision under resource scarcity
+- **CMake cache repaired**: stale `wvo2` paths in all `CMakeCache.txt` files patched; binary now outputs to `EvogameAI/build/Release/evo_sim.exe`
+- **NN inspector layout redesigned** (`nn_view.c`): replaced hardcoded pixel offsets with a two-phase cursor-based layout — geometry computed first (`sepY`, `colLabelY`, `nodeAreaTop` derived from row count), then drawn once; panel height auto-sizes; adding/removing a row is now a single line
+- **Energy cost row added to NN inspector**: shows `base`, `vis`, `move+`, and `max` drain/s computed from live genome values
+- **INPUTS/OUTPUTS label overlap fixed**: column labels now anchored below the separator via `colLabelY`, not at a magic offset from `NODES_TOP`
+
 ## Milestone 8 — Biomes + Events 🔲

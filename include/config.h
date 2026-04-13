@@ -57,7 +57,7 @@
 #define REPRODUCE_COOLDOWN          8.0f    /* seconds before creature can reproduce again */
 
 /* ── Vision cost (energy/sec per unit of cone area: vision² × halfAngle) ── */
-#define VISION_COST_SCALE           0.000001f
+#define VISION_COST_SCALE           0.00005f
 
 /* ── Size/weight energy scaling (reference radius = CREATURE_SIZE) ────── */
 /*    maxEnergy  = CREATURE_MAX_ENERGY × (size/CREATURE_SIZE)²            */
